@@ -2,4 +2,18 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - ansible-role-account
+    - role: ansible-role-account
+      account_groups:
+        - name: sudo
+          system: yes
+          state: present
+      account_users:
+        - name: foo
+          createhome: yes
+          groups: sudo
+          authorized_keys:
+            - key: 'https://github.com/m31271n.keys'
+              state: present
+        - name: bar
+          uid: 9999
+          authorized_keys: []
