@@ -1,0 +1,49 @@
+---
+- name: Ensure groups present
+  group: >-
+    name={{ item.name }}
+    gid={{ item.gid | default(omit) }}
+    state={{ item.state | default(omit) }}
+    system={{ item.system | default(omit) }}
+  with_items: '{{ account_groups }}'
+
+- name: Ensure users present
+  user: >-
+    name={{ item.name }}
+    append={{ item.append | default(omit) }}
+    comment={{ item.comment | default(omit) }}
+    createhome={{ item.createhome | default(omit) }}
+    force={{ item.force | default(omit) }}
+    generate_ssh_key={{ item.generate_ssh_key | default(omit) }}
+    group={{ item.group | default(omit) }}
+    groups={{ item.groups | default(omit) }}
+    home={{ item.home | default(omit) }}
+    login_class={{ item.login_class | default(omit) }}
+    move_home={{ item.move_home | default(omit) }}
+    non_unique={{ item.non_unique | default(omit) }}
+    password={{ item.password | default(omit) }}
+    remove={{ item.remove | default(omit) }}
+    shell={{ item.shell | default(omit) }}
+    ssh_key_bits={{ item.ssh_key_bits | default(omit) }}
+    ssh_key_comment={{ item.ssh_key_comment | default(omit) }}
+    ssh_key_file={{ item.ssh_key_file | default(omit) }}
+    ssh_key_passphrase={{ item.ssh_key_passphrase | default(omit) }}
+    ssh_key_type={{ item.ssh_key_type | default(omit) }}
+    state={{ item.state | default(omit) }}
+    system={{ item.system | default(omit) }}
+    uid={{ item.uid | default(omit) }}
+    update_password={{ item.update_password | default(omit) }}
+  with_items: '{{ account_users }}'
+
+- name: Deploy ssh public keys
+  authorized_key: >-
+    key={{ item.1.key }}
+    user={{ item.0.name }}
+    key_options={{ item.1.key_options | default(omit) }}
+    manage_dir={{ item.1.manage_dir | default(omit) }}
+    path={{ item.1.path | default(omit) }}
+    state={{ item.1.state | default(omit) }}
+  with_subelements:
+    - '{{ account_users }}'
+    - authorized_keys
+    - skip_missing: yes
